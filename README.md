@@ -43,9 +43,8 @@ python app.py
 啟動後開啟瀏覽器進入：
 ```
 http://localhost:5000
-
 ```
-![Demo](DEMO.gif)
+![Demo](static/demo.gif)
 
 ## 🧪 API 路徑
 
