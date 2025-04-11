@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fish Detection - Banana Style</title>
+    <style>
+        /* General reset for consistent styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Full-page background and centering */
+        body {
+            background-color: #d3d3d3; /* Grey background */
+            font-family: 'Comic Sans MS', cursive, sans-serif; /* Playful font */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Container to center content */
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            border: 5px solid #ffd700; /* Banana border */
+        }
+
+        /* Heading styling */
+        h1 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Styling the video feed image */
+        .video-feed {
+            width: 100%;
+            max-width: 640px;
+            height: auto;
+            border: 5px solid #ffd700; /* Banana yellow border */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        /* Hover effect on the image */
+        .video-feed:hover {
+            transform: scale(1.05);
+        }
+
+        /* CSS for drawing banana shapes using pseudo-elements */
+        .banana-left, .banana-right {
+            position: absolute;
+            width: 80px;
+            height: 160px;
+            background: linear-gradient(135deg, #fff8a0 40%, #ffd700 60%);
+            border-radius: 50% 50% 50% 50%;
+            border: 4px solid #ffd700;
+        }
+
+        /* Positioning the left banana */
+        .banana-left {
+            left: -100px;
+            top: 50%;
+            transform: translateY(-50%) rotate(-30deg);
+        }
+
+        /* Positioning the right banana */
+        .banana-right {
+            right: -100px;
+            top: 50%;
+            transform: translateY(-50%) rotate(30deg);
+        }
+
+        /* Adding a stem to the bananas using ::before */
+        .banana-left::before, .banana-right::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #8b4513; /* Brown for the banana stem */
+            border-radius: 50%;
+            top: -15px;
+            left: 30px;
+        }
+
+        /* Ensure responsiveness */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .video-feed {
+                width: 90%;
+            }
+
+            .banana-left, .banana-right {
+                width: 60px;
+                height: 120px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .video-feed {
+                width: 100%;
+            }
+
+            .banana-left, .banana-right {
+                width: 40px;
+                height: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Real-time Fish Detection</h1>
+        <div id="video-container">
+            <img id="video-feed" src="{{ url_for('video_feed') }}" class="video-feed" alt="Real-time Fish Video">
+        </div>
+        <div id="non-detection-message" style="display: none;">
+            <h2>非偵測時間</h2>
+            <p>現在是系統休眠時間，請於 3 PM 到 9 PM 之間回來查看。</p>
+        </div>
+        <!-- CSS banana decorations -->
+        <div class="banana-left"></div>
+        <div class="banana-right"></div>
+    </div>
+
+    <script>
+        function checkDetectionStatus() {
+            fetch('/detection_status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.active) {
+                        document.getElementById('video-container').style.display = 'block';
+                        document.getElementById('non-detection-message').style.display = 'none';
+                    } else {
+                        document.getElementById('video-container').style.display = 'none';
+                        document.getElementById('non-detection-message').style.display = 'block';
+                    }
+                })
+                .catch(error => console.log('Error fetching detection status:', error));
+        }
+
+        // 每隔 5 秒檢查一次狀態
+        setInterval(checkDetectionStatus, 5000);
+    </script>
+</body>
+</html>
